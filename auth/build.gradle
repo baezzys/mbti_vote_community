@@ -32,6 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-tomcat:3.1.0'
     implementation 'org.springframework.security.oauth:spring-security-oauth2:2.5.2.RELEASE'
     implementation 'mysql:mysql-connector-java:8.0.32'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.2'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.11.1'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.1'
