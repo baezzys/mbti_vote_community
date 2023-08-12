@@ -18,14 +18,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @org.testcontainers.junit.jupiter.Testcontainers
 @ContextConfiguration(initializers = {MbtiTestContainers.Initializer.class})
-@TestPropertySource(properties = {"spring.config.location=classpath:application-test.yml"})
 @ActiveProfiles("test-container")
 public @interface MbtiTestContainers {
 
     @Container
     MySQLContainer mySQLContainer = new MySQLContainer<>("mysql:8.0.30")
-            .withDatabaseName("kakao_gift")
-            .withInitScript("data/schema.sql")
+            .withDatabaseName("mbti")
+            .withInitScript("data/mbti_schema.sql")
             .withCommand("mysqld --max_connections=200");
 
     class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
