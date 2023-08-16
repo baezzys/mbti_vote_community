@@ -26,8 +26,6 @@ class UserDetailsServiceImplTest {
 
     @Test
     void loadUserByUsernameSuccess() {
-
-
         // given
         String username = "testUser";
         User user = new User(username, "password", Mbti.ESFJ);

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.auth.domain.Mbti;
+
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,12 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(bindingResult.getAllErrors());
+        }
 
         if (!isUsernameValid(loginRequest.getUsername()) || !isPasswordValid(loginRequest.getPassword())) {
             return ResponseEntity
@@ -83,7 +89,6 @@ public class UserController {
                     .badRequest()
                     .body(new MessageResponse("Error: Invalid request"));
         }
-
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()

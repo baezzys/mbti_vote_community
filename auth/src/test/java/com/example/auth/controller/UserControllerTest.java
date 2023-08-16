@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -43,12 +44,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @MbtiTestContainers
 @AutoConfigureMockMvc
+@WebMvcTest(com.example.auth.controller.UserController.class)
 @SpringBootTest
 class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
@@ -56,10 +58,6 @@ class UserControllerTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
-    protected MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(),
-            StandardCharsets.UTF_8);
 
     @BeforeEach
     public void init() {
@@ -92,7 +90,6 @@ class UserControllerTest {
         mockMvc.perform(post("/auth/signup"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Error: Username is already taken!"));
-
     }
 
     @Test
@@ -108,6 +105,7 @@ class UserControllerTest {
         mockMvc.perform(post("/auth/signin"))
                 .andExpect(status().isOk())
                 .andExpect(content().string());
+
     }
 
     @Test
@@ -131,6 +129,4 @@ class UserControllerTest {
         mockMvc.perform(post("/auth/signin"))
                 .andExpect(status().isBadRequest());
     }
-
-
 }
