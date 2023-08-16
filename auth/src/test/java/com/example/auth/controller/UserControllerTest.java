@@ -4,6 +4,7 @@ import com.example.auth.domain.ERole;
 import com.example.auth.domain.Mbti;
 import com.example.auth.domain.User;
 import com.example.auth.payload.SignUpRequest;
+import com.example.auth.payload.request.LoginRequest;
 import com.example.auth.repository.UserRepository;
 import com.example.auth.service.UserDetailsServiceImpl;
 import com.example.auth.testcontainer.MbtiTestContainers;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,19 +35,20 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(com.example.auth.controller.UserController.class)
 @MbtiTestContainers
+@AutoConfigureMockMvc
 @SpringBootTest
 class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @Autowired
+    @MockBean
     UserRepository userRepository;
 
     @Autowired
@@ -65,24 +68,30 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("signUpTest")
+    @DisplayName("signUp test: Success")
     void signUpTest() throws Exception {
-
         // given
-        SignUpRequest signUpRequest = new SignUpRequest("testUser", ERole.ROLE_USER, Mbti.ESFJ, "testPassword");
+        SignUpRequest signUpRequest = new SignUpRequest("testUser", ERole.ROLE_USER, Mbti.ESFJ, "23AB#@def");
 
         // when
-        when(userRepository.existsByUsername(any())).thenReturn(false);
+        when(userRepository.existsByUsername(anyString())).thenReturn(false);
 
         // then
-        mockMvc.perform(post("/signup"))
+        mockMvc.perform(post("/auth/signup"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("User registered successfully"));
     }
 
     @Test
-    @DisplayName("signUp test: duplicated username")
+    @DisplayName("signUp test: Fail(duplicated username)")
     void signUpDuplicatedName() throws Exception {
+        // given
+        SignUpRequest signUpRequest = new SignUpRequest("loginTest", ERole.ROLE_USER, Mbti.INTP, "23AB#@def");
+
+        // when & then
+        mockMvc.perform(post("/auth/signup"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Error: Username is already taken!"));
 
     }
 
@@ -93,27 +102,34 @@ class UserControllerTest {
         // given
         String userName = "loginTest";
         String password = "123ABCdef!@#";
+        LoginRequest loginRequest = new LoginRequest(userName, password);
 
         // when
-        mockMvc.perform(post("/signin"));
+        mockMvc.perform(post("/auth/signin"))
+                .andExpect(status().isOk())
+                .andExpect(content().string());
     }
 
     @Test
     @DisplayName("loginTest: fail")
-    void loginTestFail() {
+    void loginTestFail() throws Exception{
 
         // given
-        // both different
-        String userName1 = "testFail";
-        String password1 = "dkenAB123@@";
+        // Case1: both different
+        String diffUsername = "testFail";
+        String diffPassword = "dkenAB123@@";
+        LoginRequest bothDiff = new LoginRequest(diffUsername, diffPassword);
 
-        // password different
-        String userName2 = "loginTest";
-        String password2 = "dkenAB123@@";
+        // Case2: password different
+        String userName = "loginTest";
+        LoginRequest passwordDiff = new LoginRequest(userName, diffPassword);
 
-        // username different
-        String userName3 = "testFail";
-        String password3 = "123ABCdef!@#";
+        // Case3: username different
+        String password = "123ABCdef!@#";
+        LoginRequest usernameDiff = new LoginRequest(diffUsername, password);
+
+        mockMvc.perform(post("/auth/signin"))
+                .andExpect(status().isBadRequest());
     }
 
 

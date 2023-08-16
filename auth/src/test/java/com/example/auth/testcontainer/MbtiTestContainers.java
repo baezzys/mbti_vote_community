@@ -18,6 +18,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @org.testcontainers.junit.jupiter.Testcontainers
 @ContextConfiguration(initializers = {MbtiTestContainers.Initializer.class})
+@TestPropertySource(properties = {"spring.config.location=classpath:application-test.yml"})
 @ActiveProfiles("test-container")
 public @interface MbtiTestContainers {
 

@@ -3,25 +3,31 @@ package com.example.auth.service;
 import com.example.auth.domain.Mbti;
 import com.example.auth.domain.User;
 import com.example.auth.repository.UserRepository;
+import com.example.auth.testcontainer.MbtiTestContainers;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@MbtiTestContainers
+@Transactional
+@SpringBootTest
 class UserDetailsServiceImplTest {
 
+    @Autowired
     private UserRepository userRepository;
-    private UserDetailsServiceImpl userDetailsService;
 
-    @BeforeEach
-    void clear() {
-        userRepository.deleteAll();
-    }
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
     @Test
     void loadUserByUsernameSuccess() {
+
+
         // given
         String username = "testUser";
         User user = new User(username, "password", Mbti.ESFJ);
