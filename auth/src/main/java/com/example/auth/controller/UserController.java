@@ -50,11 +50,12 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(bindingResult.getAllErrors());
+        if (!isUsernameValid(loginRequest.getUsername()) || !isPasswordValid(loginRequest.getPassword())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Invalid request"));
         }
 
         final Authentication authentication = authenticationManager.authenticate(

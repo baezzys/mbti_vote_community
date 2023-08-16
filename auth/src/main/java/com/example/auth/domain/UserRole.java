@@ -4,28 +4,23 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_roles")
-@IdClass(UserRolesId.class)
-public class UserRoles {
-
-    @Id
-    private int userId;
-    @Id
-    private int roleId;
+@IdClass(UserRoleId.class)
+public class UserRole {
 
     @ManyToOne
+    @Id
     private User user;
 
     @ManyToOne
+    @Id
     private Role role;
 
-    public UserRoles(User user, Role role) {
+    public UserRole(User user, Role role) {
         this.user = user;
         this.role = role;
-        this.userId = user.getId();
-        this.roleId = role.getId();
     }
 
-    public UserRoles() {
+    public UserRole() {
 
     }
 
