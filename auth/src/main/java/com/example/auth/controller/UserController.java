@@ -3,6 +3,7 @@ package com.example.auth.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.example.auth.domain.Mbti;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -74,11 +75,12 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> signUp(@RequestBody SignUpRequest signUpRequest) {
 
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(bindingResult.getAllErrors());
+        if(!isValid(signUpRequest)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Invalid request"));
         }
 
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -98,5 +100,54 @@ public class UserController {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
+    }
+
+    public boolean isValid(SignUpRequest signUpRequest) {
+        if(!isPasswordValid(signUpRequest.getPassword()) ||
+                !isUsernameValid(signUpRequest.getUsername()) ||
+                !isMbtiValid(signUpRequest.getMbti()) ||
+                !isERoleValid(signUpRequest.getRole())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isPasswordValid(String password) {
+        String regex = "(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*\\W).{6,20}$";
+        if (password == null) {
+            return false;
+        }
+
+        return password.matches(regex);
+    }
+
+    public boolean isUsernameValid(String username) {
+        String regex = ".*[^a-zA-Z0-9].*";
+
+        if (username == null && username.matches(regex)) {
+            return false;
+        }
+        if(username.length() < 2 || username.length() > 20) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isMbtiValid(Mbti mbti) {
+        if (mbti == null) {
+            return false;
+        }
+
+        for (Mbti name : Mbti.values()) {
+            if (mbti.name().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isERoleValid(ERole role) {
+        return role != null && (role == ERole.ROLE_USER || role == ERole.ROLE_ADMIN);
     }
 }

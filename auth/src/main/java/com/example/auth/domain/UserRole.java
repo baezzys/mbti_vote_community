@@ -1,19 +1,16 @@
 package com.example.auth.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user_roles")
+@IdClass(UserRolesId.class)
 public class UserRoles {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int userId;
+    @Id
+    private int roleId;
 
     @ManyToOne
     private User user;
@@ -24,6 +21,8 @@ public class UserRoles {
     public UserRoles(User user, Role role) {
         this.user = user;
         this.role = role;
+        this.userId = user.getId();
+        this.roleId = role.getId();
     }
 
     public UserRoles() {
