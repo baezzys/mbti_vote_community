@@ -1,9 +1,21 @@
 package com.example.auth.payload.request;
 
-public class LoginRequest {
-    private String username;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
+public class LoginRequest {
+
+    private String username;
     private String password;
+
+    public LoginRequest(){
+    }
+
+    public LoginRequest(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     public String getUsername() {
         return username;

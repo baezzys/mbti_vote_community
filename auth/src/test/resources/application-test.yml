@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    discovery:
+      enabled : false
+
+
+
+mbti:
+  app:
+    jwtSecret: ======================mbti=Spring===========================
+    jwtExpirationMs: 86400000

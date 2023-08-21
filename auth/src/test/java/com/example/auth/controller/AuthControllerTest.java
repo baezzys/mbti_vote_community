@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @MbtiTestContainers
 @AutoConfigureMockMvc
@@ -19,13 +20,13 @@ public class AuthControllerTest {
     MockMvc mockMvc;
 
     @Test
-    void signUpTest() throws Exception {
+    void signUpTestWithWrongRequest() throws Exception {
 
         // given
         SignUpRequest signUpRequest = new SignUpRequest();
 
         // when
-        mockMvc.perform(post("/auth/signup", signUpRequest));
+        mockMvc.perform(post("/auth/signup", signUpRequest)).andExpect(status().isBadRequest());
 
         // then
     }

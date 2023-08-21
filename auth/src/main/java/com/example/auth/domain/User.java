@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +16,7 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private String username;
 
@@ -28,7 +29,7 @@ public class User {
     private Mbti mbti;
 
     @OneToMany(mappedBy = "user")
-    private Set<UserRoles> roles = new HashSet<>();
+    private Set<UserRole> roles = new HashSet<>();
 
     public User() {
     }
@@ -39,7 +40,7 @@ public class User {
         this.mbti = mbti;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
@@ -51,12 +52,12 @@ public class User {
         return password;
     }
 
-    public Set<UserRoles> getRoles() {
+    public Set<UserRole> getRoles() {
         return roles;
     }
 
     public void addRole(Role role) {
-        UserRoles userRoles = new UserRoles(this, role);
-        this.roles.add(userRoles);
+        UserRole userRole = new UserRole(this, role);
+        this.roles.add(userRole);
     }
 }
